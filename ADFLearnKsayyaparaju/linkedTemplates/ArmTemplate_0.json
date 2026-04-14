@@ -100,6 +100,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "test.csv.tz",
 						"container": "azurelearnksbloblcontainer1"
 					},
 					"columnDelimiter": "\t",
@@ -151,7 +152,7 @@
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
 									"quoteAllText": true,
-									"fileExtension": ".txt"
+									"fileExtension": ""
 								}
 							},
 							"enableStaging": false,

@@ -1,0 +1,9 @@
+{
+	"name": "ADFLearnKsayyaparaju",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6fe046bd-b42a-4d13-830e-77554ce27a3c",
+		"tenantId": "6a58c303-f57a-4bcc-95db-c5f962a7d3c5"
+	}
+}

@@ -101,7 +101,7 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": "test.csv.tz",
-						"container": "azurelearnksbloblcontainer1"
+						"container": "azurelearnksblobcontainer1"
 					},
 					"columnDelimiter": "\t",
 					"escapeChar": "\\",

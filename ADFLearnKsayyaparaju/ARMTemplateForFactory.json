@@ -21,32 +21,50 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
-				}
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:10:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 120,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"srcadflearn1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_HttpServer1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HttpServer",
-				"typeProperties": {
-					"url": "[parameters('LS_HttpServer1_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADF_Learn_1')]",
@@ -300,6 +318,58 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "azurelearnksblobcontainer1"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_HttpServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('LS_HttpServer1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -327,11 +397,17 @@
 					"transformations": [
 						{
 							"name": "filter1"
+						},
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "select1"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          customers as (customer_id as string, first_name as string, last_name as string, email as string, phone as string, country as string, city as string, state as string, zip_code as string, signup_date as string, is_active as boolean, tier as string)[],",
+						"          customers as ({} as string),",
 						"          products as (product_id as string, product_name as string, category as string, sub_category as string, unit_price as double, currency as string, stock_quantity as integer, supplier_id as string, is_available as boolean, created_date as string, last_updated as string)[],",
 						"          orders as (order_id as string, customer_id as string, order_date as string, status as string, payment_method as string, shipping_address as (street as string, city as string, state as string, zip as string, country as string), items as (product_id as string, quantity as integer, unit_price as double, discount_pct as integer)[], subtotal as double, tax as double, shipping_cost as double, total as double, currency as string)[],",
 						"          suppliers as (supplier_id as string, supplier_name as string, contact_email as string, country as string, lead_time_days as integer, rating as double)[],",
@@ -341,7 +417,29 @@
 						"     validateSchema: true,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> srcadflearn1",
-						"srcadflearn1 filter(customers.customer_id == \"CUST-001\") ~> filter1",
+						"flatten1 filter(order_id == \"ORD-10001\") ~> filter1",
+						"select1 foldDown(unroll(orders, orders),",
+						"     mapColumn(",
+						"          order_id = orders.order_id,",
+						"          customer_id = orders.customer_id,",
+						"          order_date = orders.order_date,",
+						"          status = orders.status,",
+						"          payment_method = orders.payment_method,",
+						"          shipping_address = orders.shipping_address,",
+						"          items = orders.items,",
+						"          subtotal = orders.subtotal,",
+						"          tax = orders.tax,",
+						"          shipping_cost = orders.shipping_cost,",
+						"          total = orders.total,",
+						"          currency = orders.currency",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"srcadflearn1 select(mapColumn(",
+						"          orders",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
 						"filter1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'parquet',",
@@ -353,30 +451,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ADF_Learn_1')]",
 				"[concat(variables('factoryId'), '/datasets/Parquet1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "azurelearnksblobcontainer1"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		}
 	]

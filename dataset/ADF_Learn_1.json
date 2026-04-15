@@ -9,7 +9,9 @@
 		"type": "Json",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation"
+				"type": "AzureBlobStorageLocation",
+				"fileName": "adf_learn1.json",
+				"container": "azurelearksbloblcontainer"
 			}
 		},
 		"schema": {

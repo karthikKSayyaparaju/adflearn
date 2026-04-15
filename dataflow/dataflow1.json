@@ -44,7 +44,7 @@
 				"     validateSchema: true,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> srcadflearn1",
-				"flatten1 filter(order_id ) ~> filter1",
+				"flatten1 filter(order_id == \"ORD-10001\") ~> filter1",
 				"select1 foldDown(unroll(orders, orders),",
 				"     mapColumn(",
 				"          order_id = orders.order_id,",

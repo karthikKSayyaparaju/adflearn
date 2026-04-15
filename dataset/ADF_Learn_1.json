@@ -1,0 +1,244 @@
+{
+	"name": "ADF_Learn_1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"customers": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"customer_id": {
+								"type": "string"
+							},
+							"first_name": {
+								"type": "string"
+							},
+							"last_name": {
+								"type": "string"
+							},
+							"email": {
+								"type": "string"
+							},
+							"phone": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							},
+							"city": {
+								"type": "string"
+							},
+							"state": {
+								"type": "string"
+							},
+							"zip_code": {
+								"type": "string"
+							},
+							"signup_date": {
+								"type": "string"
+							},
+							"is_active": {
+								"type": "boolean"
+							},
+							"tier": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"products": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"product_id": {
+								"type": "string"
+							},
+							"product_name": {
+								"type": "string"
+							},
+							"category": {
+								"type": "string"
+							},
+							"sub_category": {
+								"type": "string"
+							},
+							"unit_price": {
+								"type": "number"
+							},
+							"currency": {
+								"type": "string"
+							},
+							"stock_quantity": {
+								"type": "integer"
+							},
+							"supplier_id": {
+								"type": "string"
+							},
+							"is_available": {
+								"type": "boolean"
+							},
+							"created_date": {
+								"type": "string"
+							},
+							"last_updated": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"orders": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"order_id": {
+								"type": "string"
+							},
+							"customer_id": {
+								"type": "string"
+							},
+							"order_date": {
+								"type": "string"
+							},
+							"status": {
+								"type": "string"
+							},
+							"payment_method": {
+								"type": "string"
+							},
+							"shipping_address": {
+								"type": "object",
+								"properties": {
+									"street": {
+										"type": "string"
+									},
+									"city": {
+										"type": "string"
+									},
+									"state": {
+										"type": "string"
+									},
+									"zip": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									}
+								}
+							},
+							"items": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"product_id": {
+											"type": "string"
+										},
+										"quantity": {
+											"type": "integer"
+										},
+										"unit_price": {
+											"type": "number"
+										},
+										"discount_pct": {
+											"type": "integer"
+										}
+									}
+								}
+							},
+							"subtotal": {
+								"type": "number"
+							},
+							"tax": {
+								"type": "number"
+							},
+							"shipping_cost": {
+								"type": "number"
+							},
+							"total": {
+								"type": "number"
+							},
+							"currency": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"suppliers": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"supplier_id": {
+								"type": "string"
+							},
+							"supplier_name": {
+								"type": "string"
+							},
+							"contact_email": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							},
+							"lead_time_days": {
+								"type": "integer"
+							},
+							"rating": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				"metadata": {
+					"type": "object",
+					"properties": {
+						"dataset_name": {
+							"type": "string"
+						},
+						"version": {
+							"type": "string"
+						},
+						"generated_date": {
+							"type": "string"
+						},
+						"record_counts": {
+							"type": "object",
+							"properties": {
+								"customers": {
+									"type": "integer"
+								},
+								"products": {
+									"type": "integer"
+								},
+								"orders": {
+									"type": "integer"
+								},
+								"suppliers": {
+									"type": "integer"
+								}
+							}
+						},
+						"notes": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	}
+}

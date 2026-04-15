@@ -5,10 +5,6 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "DelimitedText2",
-						"type": "DatasetReference"
-					},
 					"name": "source1"
 				}
 			],
@@ -16,8 +12,7 @@
 			"transformations": [],
 			"scriptLines": [
 				"source(allowSchemaDrift: false,",
-				"     validateSchema: true,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     validateSchema: true) ~> source1"
 			]
 		}
 	}

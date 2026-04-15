@@ -40,7 +40,7 @@
 				"     documentForm: 'documentPerLine') ~> srcadflearn1",
 				"srcadflearn1 filter(customers.customer_id == \"CUST-001\") ~> filter1",
 				"filter1 sink(allowSchemaDrift: false,",
-				"     validateSchema: true,",
+				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sink1"

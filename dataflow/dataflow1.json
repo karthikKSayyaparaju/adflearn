@@ -24,11 +24,17 @@
 			"transformations": [
 				{
 					"name": "filter1"
+				},
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          customers as (),",
+				"          customers as ({} as string),",
 				"          products as (product_id as string, product_name as string, category as string, sub_category as string, unit_price as double, currency as string, stock_quantity as integer, supplier_id as string, is_available as boolean, created_date as string, last_updated as string)[],",
 				"          orders as (order_id as string, customer_id as string, order_date as string, status as string, payment_method as string, shipping_address as (street as string, city as string, state as string, zip as string, country as string), items as (product_id as string, quantity as integer, unit_price as double, discount_pct as integer)[], subtotal as double, tax as double, shipping_cost as double, total as double, currency as string)[],",
 				"          suppliers as (supplier_id as string, supplier_name as string, contact_email as string, country as string, lead_time_days as integer, rating as double)[],",
@@ -38,7 +44,18 @@
 				"     validateSchema: true,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> srcadflearn1",
-				"srcadflearn1 filter(customers[0].customer_id == \"CUST-001\") ~> filter1",
+				"flatten1 filter(ERROR_FUNCTION('@equals(item().customer_id, __SINGLE_QUOTE__CUST-001__SINGLE_QUOTE__)')) ~> filter1",
+				"select1 foldDown(unroll(orders),",
+				"     mapColumn(",
+				"          orders",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"srcadflearn1 select(mapColumn(",
+				"          orders",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
